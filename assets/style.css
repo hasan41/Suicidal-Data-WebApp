@@ -1,0 +1,119 @@
+.rc-slider-track {
+  background-color: red;
+}
+
+.rc-slider-dot-active {
+  border-color: red;
+  border: solid 2px red;
+}
+
+.rc-slider-handle {
+  background-color: red;
+  border-color: red;
+}
+
+.rc-slider-handle:hover {
+  border-color: red;
+}
+
+.rc-slider-handle-active:active {
+  border-color: red;
+}
+
+#multi_country_selection .Select--multi .Select-control {
+  background-color: #b5ff9e;
+  color: #BBBABA;
+}
+
+#multi_country_selection .Select--multi .Select-menu-outer{
+  background-color: #BBBABA;
+  color: #fff;
+}
+
+#multi_country_selection .Select--multi .Select-value {
+  background-color: #9B1E03;
+  color: #fff;
+}
+
+#multi_country_selection .VirtualizedSelectFocusedOption {
+  background-color: #9B1E03;
+}
+
+.parent {
+  display: flex;
+  justify-content: space-around;
+}
+
+.left {
+  border: 1px solid lightgray;
+  width: 48%;
+
+}
+
+.right {
+  border: 1px solid lightgray;
+  width: 48%;
+}
+
+.dropdown_style .Select-value{
+  background-color: #a6ffb2;
+  color: #a6ffb2;
+}
+
+.dropdown_style .VirtualizedSelectFocusedOption {
+  background-color: #9B1E03;
+}
+
+.dropdown_style  .Select-control {
+  background-color: #fff9c9;
+  color: #ffffff;
+}
+
+.dropdown_style  .Select-menu-outer{
+  background-color: #fff287;
+  color: #ffffff;
+}
+
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  overflow: auto;
+  background:  #ffc4c4;
+
+}
+
+.footer{
+ textAlign: center;
+}
+
+.title{
+        color: #b28cff;
+        font-family:Lucida Console;
+        font-size:30px;
+        width = 80%;
+}
+
+.subTitle{
+        textAlign: left;
+        color: #c43bff;
+        font-family:Lucida Console;
+        font-size:18px;
+        margin-left: 5%;
+}
+
+.reference{
+        color: #9B1E03;
+        font-family:Papyrus;
+        font-size:18px;
+        margin-left: 45%;
+}
+
+.information{
+        color: #fff
+        font-family:Papyrus;
+        font-size:18px;
+
+}
