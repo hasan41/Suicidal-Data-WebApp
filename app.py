@@ -105,6 +105,7 @@ options = [
 		{"label": "Kyrgyzstan", "value": "Kyrgyzstan"},
 		{"label": "Oman", "value": "Oman"},
 		{"label": "Uzbekistan", "value": "Uzbekistan"},
+        {"label": "Chile", "value": "Chile"},
 		
 
 
@@ -166,7 +167,7 @@ app.layout = html.Div([
         html.H1('SUICIDES RATES OVERVIEW')
         ], className='title' ,style={'textAlign':'center'}),
     html.Div([
-        html.P('This web application was developed within the scope of the "Data Visualization" course to explore in an interactive way the evolution of suicides in Europe at the beginning of the current century.')
+        html.P('Suicidal Web App is developed within the scope of the "Data Visualization" course to explore in an interactive way the evolution of suicides around the world from the year 1990 - 2016')
     ],style={'textAlign':'center'}),
     html.Br(), html.Br(), html.Br(),
 
@@ -217,7 +218,7 @@ app.layout = html.Div([
           2015: {'label': '2015', 'style': {'color': colors['title']}},
           2016: {'label': '2016', 'style': {'color': colors['title']}},
         }
-    )], style={'margin-left': '10%','margin-right':'10%'}) ,
+    )], style={'margin-left': '8%','margin-right':'3%'}) ,
 
     html.Br(), html.Br(), html.Br(),
     ], className='left'),
@@ -339,7 +340,7 @@ def update_country_info(year,country):
 
 def suicides_number_per_country(countries):
     if (len(countries) > 0):
-        map_df = df_country_year_grouped.loc[(df_country_year_grouped.country.isin(countries)) & (df_country_year_grouped['year'] > 1999) & (df_country_year_grouped['year'] < 2016)]
+        map_df = df_country_year_grouped.loc[(df_country_year_grouped.country.isin(countries)) & (df_country_year_grouped['year'] >= 1990) & (df_country_year_grouped['year'] <= 2016)]
 
         fig = px.line(map_df, x='year', y='suicides_no', color='country' , labels={'suicides_no':'Number of Suicides ', 'year': 'Year ','country':'Country '})
         fig.update_layout(
@@ -453,7 +454,7 @@ def generate_gender_pie(dropdown_years , dropdown_country):
 def show_hide_element(visibility_state):
     years.clear()
     if visibility_state != '':
-        yearsFromDF = df_country_year_grouped.loc[ (df_country_year_grouped['country'] == visibility_state) & (df_country_year_grouped['year'] >= 1993) & (df_country_year_grouped['year'] <= 2016) ]['year']
+        yearsFromDF = df_country_year_grouped.loc[ (df_country_year_grouped['country'] == visibility_state) & (df_country_year_grouped['year'] >= 1990) & (df_country_year_grouped['year'] <= 2016) ]['year']
         for i in yearsFromDF:
             years.append({'label': i, 'value': i})
         return {'display': 'block'} , years
