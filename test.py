@@ -1,4 +1,5 @@
 import psycopg2
+import pandas as pd
 
 db_conc = {
     "host"      : "suicide-db.cfnbykir9i4m.us-east-1.rds.amazonaws.com",

@@ -323,7 +323,7 @@ def update_country_info(year,country):
 
     if year != '' and country != '':
         pop = df_europe_country_year_grouped.loc[ (df_europe_country_year_grouped.year == year) & (df_europe_country_year_grouped.country == country)]['population'].astype(str).iloc[0]
-        gdp = df_europe.loc[ (df_europe.year == year) & (df_europe.country == country)]['gdp_per_capita ($)'].astype(str).iloc[0]
+        gdp = df_europe.loc[ (df_europe.year == year) & (df_europe.country == country)]['gdp_per_capita'].astype(str).iloc[0]
         return pop , gdp , {'display': 'block' }  , {'display': 'block', 'display': 'flex', 'justify-content': 'space-around' }
     else:
         return '','', {'display': 'none' } , {'display': 'none' } 
