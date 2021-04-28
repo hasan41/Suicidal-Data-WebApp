@@ -77,17 +77,17 @@ df.head()
 
 # df = pd.read_csv('data/suicides.csv')
 # df = df.rename(columns={'suicides/100k pop':'suicides/100k_pop'})
-european_countries = ['Russian Federation','Germany','United Kingdom','France','Italy','Spain','Ukraine', 'Poland','Romania','Netherlands','Belgium', 'Czech Republic' ,
+countries = ['Russian Federation','Germany','United Kingdom','France','Italy','Spain','Ukraine', 'Poland','Romania','Netherlands','Belgium', 'Czech Republic' ,
                           'Greece' , 'Portugal'  ,'Sweden' , 'Hungary', 'Belarus' , 'Austria', 'Serbia' ,  'Switzerland' , 'Bulgaria' , 'Denmark' , 'Finland',
                           'Slovakia', 'Norway', 'Ireland' , 'Croatia' , 'Cyprus' , 'Bosnia and Herzegovina',  'Albania' ,  'Lithuania' ,  'Slovenia' , 'Latvia',
                           'Estonia',  'Montenegro' ,  'Luxembourg', 'Malta', 'Iceland', 'United States', 'Israel', 'Brazil', 'Mongolia', 'Argentina', 'Columbia', 'Japan', 
-                          'Mexico', 'United Arab Emirates', 'Canada', 'Singapore', 'Kazakhstan', 'Kyrgyzstan', 'Oman', 'Uzbekistan']
+                          'Mexico', 'United Arab Emirates', 'Canada', 'Singapore', 'Kazakhstan', 'Kyrgyzstan', 'Oman', 'Uzbekistan', 'Chile']
 
 
-df_europe = df.copy()
-df_europe = df_europe.loc[df_europe['country'].isin(european_countries)]
-df_europe_country_year_grouped =  df_europe.groupby(['country','year'])[['suicides_no','population']].agg('sum').reset_index()
-df_europe_country_year_grouped.head()
+df_country = df.copy()
+df_country = df_country.loc[df_country['country'].isin(countries)]
+df_country_year_grouped =  df_country.groupby(['country','year'])[['suicides_no','population']].agg('sum').reset_index()
+df_country_year_grouped.head()
 
 options = [
 
@@ -185,11 +185,14 @@ app.layout = html.Div([
     html.Div([
     dcc.Slider(
         id='slider_date',
-        min=1993,
+        min=1990,
         max=2016,
         step=1,
-        value=1993,
+        value=1990,
         marks={
+          1990: {'label': '1990', 'style': {'color': colors['title']}},
+          1991: {'label': '1991', 'style': {'color': colors['title']}},
+          1992: {'label': '1992', 'style': {'color': colors['title']}},
           1993: {'label': '1993', 'style': {'color': colors['title']}},
           1994: {'label': '1994', 'style': {'color': colors['title']}},
           1995: {'label': '1995', 'style': {'color': colors['title']}},
@@ -220,12 +223,14 @@ app.layout = html.Div([
     html.Br(), html.Br(), html.Br(),
     ], className='left'),
 
+
+
     #---- RIGHT PANEL
     html.Div([
     dcc.Dropdown(
         id = 'multi_country_selection',
         options=options,
-        value=['Portugal'],
+        value=['Israel'],
         multi=True
     ),
     html.Div([
@@ -322,8 +327,8 @@ app.layout = html.Div([
 def update_country_info(year,country):
 
     if year != '' and country != '':
-        pop = df_europe_country_year_grouped.loc[ (df_europe_country_year_grouped.year == year) & (df_europe_country_year_grouped.country == country)]['population'].astype(str).iloc[0]
-        gdp = df_europe.loc[ (df_europe.year == year) & (df_europe.country == country)]['gdp_per_capita'].astype(str).iloc[0]
+        pop = df_country_year_grouped.loc[ (df_country_year_grouped.year == year) & (df_country_year_grouped.country == country)]['population'].astype(str).iloc[0]
+        gdp = df_country.loc[ (df_country.year == year) & (df_country.country == country)]['gdp_per_capita'].astype(str).iloc[0]
         return pop , gdp , {'display': 'block' }  , {'display': 'block', 'display': 'flex', 'justify-content': 'space-around' }
     else:
         return '','', {'display': 'none' } , {'display': 'none' } 
@@ -335,7 +340,7 @@ def update_country_info(year,country):
 
 def suicides_number_per_country(countries):
     if (len(countries) > 0):
-        map_df = df_europe_country_year_grouped.loc[(df_europe_country_year_grouped.country.isin(countries)) & (df_europe_country_year_grouped['year'] > 1999) & (df_europe_country_year_grouped['year'] < 2016)]
+        map_df = df_country_year_grouped.loc[(df_country_year_grouped.country.isin(countries)) & (df_country_year_grouped['year'] > 1999) & (df_country_year_grouped['year'] < 2016)]
 
         fig = px.line(map_df, x='year', y='suicides_no', color='country' , labels={'suicides_no':'Number of Suicides ', 'year': 'Year ','country':'Country '})
         fig.update_layout(
@@ -359,8 +364,8 @@ def suicides_number_per_country(countries):
     [Input(component_id='slider_date', component_property='value')])
 def generate_map_europe(date_value):
 
-    map_df = df_europe_country_year_grouped.loc[(df_europe_country_year_grouped.year == date_value) ]
-    map_df['suicides_per_100k'] =  (100000 * df_europe_country_year_grouped['suicides_no']) / df_europe_country_year_grouped['population']
+    map_df = df_country_year_grouped.loc[(df_country_year_grouped.year == date_value) ]
+    map_df['suicides_per_100k'] =  (100000 * df_country_year_grouped['suicides_no']) / df_country_year_grouped['population']
 
     fig = px.choropleth(data_frame=map_df, locationmode='country names', labels={'suicides_per_100k':'Suicides per 100K population ' , 'country':'Country '}  , hover_data=['country'] , locations=map_df['country'], scope='world' , color=map_df['suicides_per_100k'],color_continuous_scale='orrd' )
     fig.update_layout(
@@ -383,7 +388,7 @@ def generate_map_europe(date_value):
 def generate_age_plot(dropdown_years , dropdown_country):
 
     if dropdown_years != '' and dropdown_country != '':
-        dff = df_europe.loc[(df_europe.year==dropdown_years) & (df_europe.country==dropdown_country)]
+        dff = df_country.loc[(df_country.year==dropdown_years) & (df_country.country==dropdown_country)]
 
         plot_age = px.bar(
             data_frame=dff,
@@ -418,7 +423,7 @@ def generate_age_plot(dropdown_years , dropdown_country):
 def generate_gender_pie(dropdown_years , dropdown_country):
 
     if (dropdown_years != '' and dropdown_country != ''):
-        dff = df_europe.loc[(df_europe.year == dropdown_years) & (df_europe.country == dropdown_country)].groupby(['country','year','sex'])[['suicides_no']].agg('sum').reset_index()
+        dff = df_country.loc[(df_country.year == dropdown_years) & (df_country.country == dropdown_country)].groupby(['country','year','sex'])[['suicides_no']].agg('sum').reset_index()
 
         piechart=px.pie(
             data_frame = dff,
@@ -449,7 +454,7 @@ def generate_gender_pie(dropdown_years , dropdown_country):
 def show_hide_element(visibility_state):
     years.clear()
     if visibility_state != '':
-        yearsFromDF = df_europe_country_year_grouped.loc[ (df_europe_country_year_grouped['country'] == visibility_state) & (df_europe_country_year_grouped['year'] >= 1993) & (df_europe_country_year_grouped['year'] <= 2016) ]['year']
+        yearsFromDF = df_country_year_grouped.loc[ (df_country_year_grouped['country'] == visibility_state) & (df_country_year_grouped['year'] >= 1993) & (df_country_year_grouped['year'] <= 2016) ]['year']
         for i in yearsFromDF:
             years.append({'label': i, 'value': i})
         return {'display': 'block'} , years
