@@ -4,12 +4,79 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input , Output , State
 import plotly.express as px
+# import postsql
+import psycopg2
 
-# ----------------------- DATA PROCESSMENT
+# ----- POSTGRSQL DATABASE CONNECTION --------
+
+# con = psycopg2.connect(database="suicide", user="postgres", password="Password", host="suicide-db.cfnbykir9i4m.us-east-1.rds.amazonaws.com", port="5432")
+
+# cur = con.cursor()
+# cur.execute("SELECT country from public.suicide")
+# df = cur.fetchall()
+
+# # print("Rows: ", rows)
+
+# print("Database opened successfully")
+
+db_conc = {
+    "host"      : "suicide-db.cfnbykir9i4m.us-east-1.rds.amazonaws.com",
+    "database"  : "suicide",
+    "user"      : "postgres",
+    "password"  : "Password"
+}
+
+def connect(db_conc):
+    """ Connect to the PostgreSQL database server """
+    conn = None
+    try:
+        # connect to the PostgreSQL server
+        print('Connecting to the PostgreSQL database...')
+        conn = psycopg2.connect(**db_conc)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        sys.exit(1) 
+    print("Connection successful")
+    return conn
 
 
-df = pd.read_csv('data/suicides.csv')
-df = df.rename(columns={'suicides/100k pop':'suicides/100k_pop'})
+def postgresql_to_dataframe(conn, select_query, column_names):
+    """
+    Tranform a SELECT query into a pandas dataframe
+    """
+    cursor = conn.cursor()
+    try:
+        cursor.execute(select_query)
+    except (Exception, psycopg2.DatabaseError) as error:
+        print("Error: %s" % error)
+        cursor.close()
+        return 1
+    
+    # Naturally we get a list of tupples
+    tupples = cursor.fetchall()
+    cursor.close()
+    
+    # We just need to turn it into a pandas dataframe
+    df = pd.DataFrame(tupples, columns=column_names)
+    return df
+
+
+
+
+
+# ----------------------- DATA PROCESSMENT ----------
+
+# Connect to the database
+conn = connect(db_conc)
+column_names = ["Id", "country", "year", "sex", "age", "suicides_no", "population", "suicides/100k_pop", "country_year", "HDI_for_year", "gdp_for_year", "gdp_per_capita", "generation"]
+# Execute the "SELECT *" query
+df = postgresql_to_dataframe(conn, "select * from public.suicide", column_names)
+df.head()
+
+
+
+# df = pd.read_csv('data/suicides.csv')
+# df = df.rename(columns={'suicides/100k pop':'suicides/100k_pop'})
 european_countries = ['Russian Federation','Germany','United Kingdom','France','Italy','Spain','Ukraine', 'Poland','Romania','Netherlands','Belgium', 'Czech Republic' ,
                           'Greece' , 'Portugal'  ,'Sweden' , 'Hungary', 'Belarus' , 'Austria', 'Serbia' ,  'Switzerland' , 'Bulgaria' , 'Denmark' , 'Finland',
                           'Slovakia', 'Norway', 'Ireland' , 'Croatia' , 'Cyprus' , 'Bosnia and Herzegovina',  'Albania' ,  'Lithuania' ,  'Slovenia' , 'Latvia',
@@ -118,11 +185,18 @@ app.layout = html.Div([
     html.Div([
     dcc.Slider(
         id='slider_date',
-        min=2000,
-        max=2015,
+        min=1993,
+        max=2016,
         step=1,
-        value=2000,
+        value=1993,
         marks={
+          1993: {'label': '1993', 'style': {'color': colors['title']}},
+          1994: {'label': '1994', 'style': {'color': colors['title']}},
+          1995: {'label': '1995', 'style': {'color': colors['title']}},
+          1996: {'label': '1996', 'style': {'color': colors['title']}},
+          1997: {'label': '1997', 'style': {'color': colors['title']}},
+          1998: {'label': '1998', 'style': {'color': colors['title']}},
+          1999: {'label': '1999', 'style': {'color': colors['title']}},
           2000: {'label': '2000', 'style': {'color': colors['title']}},
           2001: {'label': '2001', 'style': {'color': colors['title']}},
           2002: {'label': '2002', 'style': {'color': colors['title']}},
@@ -139,6 +213,7 @@ app.layout = html.Div([
           2013: {'label': '2013', 'style': {'color': colors['title']}},
           2014: {'label': '2014', 'style': {'color': colors['title']}},
           2015: {'label': '2015', 'style': {'color': colors['title']}},
+          2016: {'label': '2016', 'style': {'color': colors['title']}},
         }
     )], style={'margin-left': '10%','margin-right':'10%'}) ,
 
@@ -248,7 +323,7 @@ def update_country_info(year,country):
 
     if year != '' and country != '':
         pop = df_europe_country_year_grouped.loc[ (df_europe_country_year_grouped.year == year) & (df_europe_country_year_grouped.country == country)]['population'].astype(str).iloc[0]
-        gdp = df_europe.loc[ (df_europe.year == year) & (df_europe.country == country)]['gdp_per_capita ($)'].astype(str).iloc[0]
+        gdp = df_europe.loc[ (df_europe.year == year) & (df_europe.country == country)]['gdp_per_capita'].astype(str).iloc[0]
         return pop , gdp , {'display': 'block' }  , {'display': 'block', 'display': 'flex', 'justify-content': 'space-around' }
     else:
         return '','', {'display': 'none' } , {'display': 'none' } 
@@ -257,6 +332,7 @@ def update_country_info(year,country):
 @app.callback(
     Output('multi_suicide_number' , "figure"),
     [Input(component_id='multi_country_selection', component_property='value')])
+
 def suicides_number_per_country(countries):
     if (len(countries) > 0):
         map_df = df_europe_country_year_grouped.loc[(df_europe_country_year_grouped.country.isin(countries)) & (df_europe_country_year_grouped['year'] > 1999) & (df_europe_country_year_grouped['year'] < 2016)]
@@ -337,9 +413,11 @@ def generate_age_plot(dropdown_years , dropdown_country):
     Output(component_id='gender_pie', component_property='style') ,
     [Input(component_id='dropdown-years', component_property='value'),
      Input(component_id='dropdown-country', component_property='value')])
+
+
 def generate_gender_pie(dropdown_years , dropdown_country):
 
-    if dropdown_years != '' and dropdown_country != '':
+    if (dropdown_years != '' and dropdown_country != ''):
         dff = df_europe.loc[(df_europe.year == dropdown_years) & (df_europe.country == dropdown_country)].groupby(['country','year','sex'])[['suicides_no']].agg('sum').reset_index()
 
         piechart=px.pie(
@@ -371,7 +449,7 @@ def generate_gender_pie(dropdown_years , dropdown_country):
 def show_hide_element(visibility_state):
     years.clear()
     if visibility_state != '':
-        yearsFromDF = df_europe_country_year_grouped.loc[ (df_europe_country_year_grouped['country'] == visibility_state) & (df_europe_country_year_grouped['year'] > 1999) & (df_europe_country_year_grouped['year'] < 2016) ]['year']
+        yearsFromDF = df_europe_country_year_grouped.loc[ (df_europe_country_year_grouped['country'] == visibility_state) & (df_europe_country_year_grouped['year'] >= 1993) & (df_europe_country_year_grouped['year'] <= 2016) ]['year']
         for i in yearsFromDF:
             years.append({'label': i, 'value': i})
         return {'display': 'block'} , years
