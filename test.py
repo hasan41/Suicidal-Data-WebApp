@@ -12,13 +12,10 @@ def connect(db_conc):
     """ Connect to the PostgreSQL database server """
     conn = None
     try:
-        # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**db_conc)
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         sys.exit(1) 
-    print("Connection successful")
     return conn
 
 

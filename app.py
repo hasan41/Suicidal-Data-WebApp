@@ -31,7 +31,6 @@ def connect(db_conc):
     conn = None
     try:
         # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(**db_conc)
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
@@ -77,11 +76,11 @@ df.head()
 
 # df = pd.read_csv('data/suicides.csv')
 # df = df.rename(columns={'suicides/100k pop':'suicides/100k_pop'})
-european_countries = ['Russian Federation','Germany','United Kingdom','France','Italy','Spain','Ukraine', 'Poland','Romania','Netherlands','Belgium', 'Czech Republic' ,
+european_countries = ['Russian Federation','Germany','United Kingdom','France','Spain','Ukraine', 'Poland','Romania','Netherlands','Belgium', 'Czech Republic' ,
                           'Greece' , 'Portugal'  ,'Sweden' , 'Hungary', 'Belarus' , 'Austria', 'Serbia' ,  'Switzerland' , 'Bulgaria' , 'Denmark' , 'Finland',
-                          'Slovakia', 'Norway', 'Ireland' , 'Croatia' , 'Cyprus' , 'Bosnia and Herzegovina',  'Albania' ,  'Lithuania' ,  'Slovenia' , 'Latvia',
+                          'Slovakia', 'Norway', 'Croatia' , 'Cyprus' , 'Bosnia and Herzegovina',  'Albania' ,  'Lithuania' ,  'Slovenia' , 'Latvia',
                           'Estonia',  'Montenegro' ,  'Luxembourg', 'Malta', 'Iceland', 'United States', 'Israel', 'Brazil', 'Mongolia', 'Argentina', 'Columbia', 'Japan', 
-                          'Mexico', 'United Arab Emirates', 'Canada', 'Singapore', 'Kazakhstan', 'Kyrgyzstan', 'Oman', 'Uzbekistan']
+                          'Mexico', 'United Arab Emirates', 'Canada', 'Singapore', 'Kazakhstan', 'Kyrgyzstan', 'Oman', 'Uzbekistan', 'Italy', 'Ireland']
 
 
 df_europe = df.copy()
