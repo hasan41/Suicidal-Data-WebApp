@@ -1,0 +1,7 @@
+Flask
+dash
+psycopg2-binary
+plotly
+pandas
+seaborn
+matplotlib
