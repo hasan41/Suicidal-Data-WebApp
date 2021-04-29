@@ -307,7 +307,7 @@ app.layout = html.Div([
     #--- FOOTER
     html.Div([
     html.P('Developed by Georgia Tech Nerds'),
-    html.A('Used dataset can be found here', href='https://www.kaggle.com/russellyates88/suicide-rates-overview-1985-to-2016' , target='_blank' ),
+    # html.A('Used dataset can be found here', href='https://www.kaggle.com/russellyates88/suicide-rates-overview-1985-to-2016' , target='_blank' ),
     ],style={'textAlign': 'center'}),
 
     html.Br(),
@@ -326,7 +326,7 @@ app.layout = html.Div([
      Input(component_id='dropdown-country', component_property='value')])
 def update_country_info(year,country):
 
-    if year != '' and country != '':
+    if (country != '' and year != ''):
         pop = df_country_year_grouped.loc[ (df_country_year_grouped.year == year) & (df_country_year_grouped.country == country)]['population'].astype(str).iloc[0]
         gdp = df_country.loc[ (df_country.year == year) & (df_country.country == country)]['gdp_per_capita'].astype(str).iloc[0]
         return pop , gdp , {'display': 'block' }  , {'display': 'block', 'display': 'flex', 'justify-content': 'space-around' }

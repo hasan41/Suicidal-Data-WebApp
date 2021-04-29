@@ -8,7 +8,7 @@
 }
 
 .rc-slider-handle {
-  background-color: red;
+  background-color: #b5ff9e;
   border-color: red;
 }
 
@@ -105,15 +105,15 @@
 }
 
 .reference{
-        color: #9B1E03;
-        font-family:Papyrus;
+        color: #b28cff;
+        font-family:Lucida Console;
         font-size:18px;
         margin-left: 45%;
 }
 
 .information{
         color: #fff
-        font-family:Papyrus;
+        font-family:Lucida Console;
         font-size:18px;
 
 }
