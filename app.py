@@ -167,7 +167,7 @@ app.layout = html.Div([
         html.H1('SUICIDES RATES OVERVIEW')
         ], className='title' ,style={'textAlign':'center'}),
     html.Div([
-        html.P('Suicidal Web App is developed within the scope of the "Data Visualization" course to explore in an interactive way the evolution of suicides around the world from the year 1990 - 2016')
+        # html.P('Suicidal Web App is developed within the scope of the "Data Visualization" course to explore in an interactive way the evolution of suicides around the world from the year 1990 - 2016')
     ],style={'textAlign':'center'}),
     html.Br(), html.Br(), html.Br(),
 
@@ -185,11 +185,16 @@ app.layout = html.Div([
     html.Div([
     dcc.Slider(
         id='slider_date',
-        min=1990,
+        min=1985,
         max=2016,
         step=1,
-        value=1990,
+        value=1985,
         marks={
+          1985: {'label': '1985', 'style': {'color': colors['title']}},
+          1986: {'label': '1986', 'style': {'color': colors['title']}},
+          1987: {'label': '1987', 'style': {'color': colors['title']}},
+          1988: {'label': '1988', 'style': {'color': colors['title']}},
+          1989: {'label': '1989', 'style': {'color': colors['title']}},
           1990: {'label': '1990', 'style': {'color': colors['title']}},
           1991: {'label': '1991', 'style': {'color': colors['title']}},
           1992: {'label': '1992', 'style': {'color': colors['title']}},
@@ -297,8 +302,12 @@ app.layout = html.Div([
         dcc.Graph(id="age_plot"),
     ], className='right'),
     html.Div([
-        html.H1('Gender Variation',className='reference'),
+        html.H1('Gender Pie',className='reference'),
         dcc.Graph(id="gender_pie")
+    ], className='right'),
+    html.Div([
+        html.H1('Generation Pie',className='reference'),
+        dcc.Graph(id="generation_pie")
     ], className='right'),
     ],id='hided_plots' ),
 
@@ -340,7 +349,7 @@ def update_country_info(year,country):
 
 def suicides_number_per_country(countries):
     if (len(countries) > 0):
-        map_df = df_country_year_grouped.loc[(df_country_year_grouped.country.isin(countries)) & (df_country_year_grouped['year'] >= 1990) & (df_country_year_grouped['year'] <= 2016)]
+        map_df = df_country_year_grouped.loc[(df_country_year_grouped.country.isin(countries)) & (df_country_year_grouped['year'] >= 1985) & (df_country_year_grouped['year'] <= 2016)]
 
         fig = px.line(map_df, x='year', y='suicides_no', color='country' , labels={'suicides_no':'Number of Suicides ', 'year': 'Year ','country':'Country '})
         fig.update_layout(
@@ -445,6 +454,41 @@ def generate_gender_pie(dropdown_years , dropdown_country):
 
     return px.pie() , {'display': 'none'}
 
+
+#----- Gen Chart -----
+
+@app.callback(
+    Output('generation_pie' , "figure"),
+    Output(component_id='generation_pie', component_property='style') ,
+    [Input(component_id='dropdown-years', component_property='value'),
+     Input(component_id='dropdown-country', component_property='value')])
+
+
+def generate_generation_pie(dropdown_years , dropdown_country):
+
+    if (dropdown_years != '' and dropdown_country != ''):
+        dff = df_country.loc[(df_country.year == dropdown_years) & (df_country.country == dropdown_country)].groupby(['country','year','generation'])[['suicides_no']].agg('sum').reset_index()
+
+        piechart=px.pie(
+            data_frame = dff,
+            names = dff.generation,
+            values = dff.suicides_no,
+            hole = 0.5,
+            labels = {'suicides_no':'Number of Suicides ', 'age': 'Age Group ','generation':'Generation '} 
+        )
+
+        piechart.update_layout(
+            plot_bgcolor=colors['background'],
+            paper_bgcolor=colors['background'],
+            font_color=colors['title'],
+            margin={"r":40,"t":20,"l":10,"b":50},
+            geo=dict(bgcolor='rgba(0,0,0,0)')
+        )
+
+        return piechart , {'display': 'block','width':'90%'}
+
+    return px.pie() , {'display': 'none'}
+
 #--- SHOW YEARS AVAILABLE FOR EACH COUNTRY IN 'COUNTRY INFORMATION' SECTION ---------
 
 @app.callback(
@@ -454,7 +498,7 @@ def generate_gender_pie(dropdown_years , dropdown_country):
 def show_hide_element(visibility_state):
     years.clear()
     if visibility_state != '':
-        yearsFromDF = df_country_year_grouped.loc[ (df_country_year_grouped['country'] == visibility_state) & (df_country_year_grouped['year'] >= 1990) & (df_country_year_grouped['year'] <= 2016) ]['year']
+        yearsFromDF = df_country_year_grouped.loc[ (df_country_year_grouped['country'] == visibility_state) & (df_country_year_grouped['year'] >= 1985) & (df_country_year_grouped['year'] <= 2016) ]['year']
         for i in yearsFromDF:
             years.append({'label': i, 'value': i})
         return {'display': 'block'} , years
