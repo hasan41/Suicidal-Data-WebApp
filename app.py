@@ -80,7 +80,8 @@ countries = ['Russian Federation','Germany','United Kingdom','France','Italy','S
                           'Greece' , 'Portugal'  ,'Sweden' , 'Hungary', 'Belarus' , 'Austria', 'Serbia' ,  'Switzerland' , 'Bulgaria' , 'Denmark' , 'Finland',
                           'Slovakia', 'Norway', 'Croatia' , 'Cyprus' , 'Bosnia and Herzegovina',  'Albania' ,  'Lithuania' ,  'Slovenia' , 'Latvia',
                           'Estonia',  'Montenegro' ,  'Luxembourg', 'Malta', 'Iceland', 'United States', 'Israel', 'Brazil', 'Mongolia', 'Argentina', 'Columbia', 'Japan', 
-                          'Mexico', 'United Arab Emirates', 'Canada', 'Singapore', 'Kazakhstan', 'Kyrgyzstan', 'Oman', 'Uzbekistan', 'Chile']
+                          'Mexico', 'United Arab Emirates', 'Canada', 'Singapore', 'Kazakhstan', 'Kyrgyzstan', 'Oman', 'Uzbekistan', 'Chile', 'Sri Lanka', 'Australia', 
+                          'South Africa', 'New Zealand', 'Oman', 'Thailand', 'Philippines', 'Iceland', 'Nicaragua', 'Fiji']
 
 
 df_country = df.copy()
@@ -106,6 +107,19 @@ options = [
 		{"label": "Oman", "value": "Oman"},
 		{"label": "Uzbekistan", "value": "Uzbekistan"},
         {"label": "Chile", "value": "Chile"},
+        {"label": "Sri Lanka", "value": "Sri Lanka"},
+        {"label": "Australia", "value": "Australia"},
+        {"label": "South Africa", "value": "South Africa"},
+        {"label": "New Zealand", "value": "New Zealand"},
+        {"label": "Oman", "value": "Oman"},
+        {"label": "Thailand", "value": "Thailand"},
+        {"label": "Philippines", "value": "Philippines"},
+        {"label": "Iceland", "value": "Iceland"},
+        {"label": "Nicaragua", "value": "Nicaragua"},
+        {"label": "Fiji", "value": "Fiji"},
+
+
+
 		
 
 
@@ -188,7 +202,7 @@ app.layout = html.Div([
         min=1985,
         max=2016,
         step=1,
-        value=1985,
+        value=2010,
         marks={
           1985: {'label': '1985', 'style': {'color': colors['title']}},
           1986: {'label': '1986', 'style': {'color': colors['title']}},
@@ -223,7 +237,7 @@ app.layout = html.Div([
           2015: {'label': '2015', 'style': {'color': colors['title']}},
           2016: {'label': '2016', 'style': {'color': colors['title']}},
         }
-    )], style={'margin-left': '8%','margin-right':'3%'}) ,
+    )], style={'margin-left': '8%','margin-right':'1%'}) ,
 
     html.Br(), html.Br(), html.Br(),
     ], className='left'),
@@ -235,7 +249,7 @@ app.layout = html.Div([
     dcc.Dropdown(
         id = 'multi_country_selection',
         options=options,
-        value=['Israel'],
+        value=['United States', 'Israel', 'Kazakhstan', 'Japan'],
         multi=True
     ),
     html.Div([
